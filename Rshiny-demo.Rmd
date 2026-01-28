@@ -1,0 +1,155 @@
+---
+title: "Making interactive aplication analytic with R"
+subtitle: "Etika Dwi Lestari"
+author: "elestari@wcs.org"
+date: ""
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+library(knitr)
+opts_chunk$set(message = FALSE, warning = FALSE, cache = TRUE,
+               fig.height = 6, fig.width = 8, fig.align = "center", 
+               out.width = '100%') #out.height = '400px')
+```
+
+```{css, echo=FALSE}
+.remark-slide-content {
+  padding-top: 0px;
+}
+
+
+.remark-code {
+  font-size: 13px;
+}
+
+.code10 .remark-code {
+  font-size: 10%;
+}
+
+.code20 .remark-code {
+  font-size: 20%;
+}
+
+.code30 .remark-code {
+  font-size: 30%;
+}
+
+.code40 .remark-code {
+  font-size: 40%;
+}
+
+.code50 .remark-code {
+  font-size: 50%;
+}
+
+.code60 .remark-code {
+  font-size: 60%;
+}
+
+.code70 .remark-code {
+  font-size: 70%;
+}
+
+.code80 .remark-code {
+  font-size: 80%;
+}
+
+.code90 .remark-code {
+  font-size: 90%;
+}
+```
+
+---
+class: inverse, center, middle
+
+# Mapping point data
+
+---
+
+## Palm trees in Sevilla
+
+```{r echo=FALSE}
+
+library(dplyr)
+library(knitr)
+
+data("quakes")
+
+# Ambil 200 data sebagai contoh
+quakes_sample <- quakes %>%
+  sample_n(200)
+
+kable(
+  head(quakes_sample[, c("lat", "long", "mag", "depth")]),
+  format = "html"
+)
+
+```
+
+
+
+---
+
+## Make interactive map (leaflet)
+
+```{r}
+library("leaflet")
+```
+
+https://rstudio.github.io/leaflet
+
+([Cheatsheet](https://github.com/rstudio/cheatsheets/blob/main/leaflet.pdf))
+
+---
+## 🔹 Slide — Make interactive map (leaflet)
+
+Lanjutkan dengan **leaflet map berbasis quakes**:
+
+```{r cache=FALSE}
+library(shiny)
+library(bslib)
+
+ui <- page_sidebar(
+  title = "Hello Shiny!",
+  sidebar = sidebar(
+    sliderInput(
+      inputId = "bins",
+      label = "Number of bins:",
+      min = 1,
+      max = 50,
+      value = 30
+    )
+  ),
+  plotOutput(outputId = "distPlot")
+)
+
+server <- function(input, output) {
+
+  output$distPlot <- renderPlot({
+
+    x    <- faithful$waiting
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+
+    hist(
+      x,
+      breaks = bins,
+      col = "#007bc2",
+      border = "white",
+      xlab = "Waiting time (min)",
+      main = "Histogram of waiting times"
+    )
+  })
+}
+
+shinyApp(ui = ui, server = server)
