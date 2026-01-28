@@ -15,8 +15,16 @@ Peserta dapat menjalankan aplikasi ini secara lokal di laptop masing-masing.
 
     -- tidyverse
 
+    -- dplyr
+
+    -- plotly
+
+    -- leaflet
+
+    -- DT
+
 -   Install package (jika belum ada):
 
     ```{r}
-     install.packages(c("shiny", "tidyverse","dplyr","ploty","leaflet"))
+     install.packages(c("shiny", "tidyverse","dplyr","ploty","leaflet","DT"))
     ```
