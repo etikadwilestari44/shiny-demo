@@ -7,17 +7,6 @@ library(dplyr)
 library(ggplot2)
 library(palmerpenguins)
 
-# ==============================
-# Load & Prepare Data
-# ==============================
-data(penguins)
-
-penguins_clean <- penguins %>%
-  filter(
-    !is.na(bill_length_mm),
-    !is.na(body_mass_g),
-    !is.na(species)
-  )
 
 # ==============================
 # UI
@@ -57,7 +46,7 @@ ui <- fluidPage(
       hr(),
       
       h4("Tabel Data"),
-      tableOutput("table_data"),
+      dataTableOutput("table_data"),
       
       hr(),
       
@@ -72,6 +61,7 @@ ui <- fluidPage(
 # ==============================
 server <- function(input, output, session) {
   
+  # === PROSES (Reactive Data) ===
   data_filtered <- reactive({
     
     df <- penguins_clean
@@ -89,14 +79,21 @@ server <- function(input, output, session) {
     df
   })
   
+  
   output$summary_text <- renderText({
     paste("Jumlah penguin:", nrow(data_filtered()))
   })
   
-  output$table_data <- renderTable({
-    data_filtered()
+  
+  # === OUTPUT: Tabel ===
+  output$table_data <- DT::renderDataTable({
+    DT::datatable(
+      data_filtered()
+    )
   })
   
+  
+  # === OUTPUT: GRAFIK ===
   output$plot_data <- renderPlot({
     ggplot(
       data_filtered(),

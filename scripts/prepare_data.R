@@ -19,7 +19,11 @@ glimpse(penguins)
 # ==============================
 
 penguins_clean <- penguins %>%
-  filter(!is.na(bill_length_mm)) %>%
+  filter(
+    !is.na(bill_length_mm),
+    !is.na(body_mass_g),
+    !is.na(species)
+    ) %>%
   select(
     species,
     island,
